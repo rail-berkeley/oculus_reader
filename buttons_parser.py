@@ -24,6 +24,8 @@ def parse_buttons(text):
             split_text.remove(key)
     for elem in split_text:
         split_elem = elem.split(' ')
+        if len(split_elem) < 2:
+            continue
         key = split_elem[0]
         value = tuple([float(x) for x in split_elem[1:]])
         buttons[key] = value

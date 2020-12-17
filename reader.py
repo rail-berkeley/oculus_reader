@@ -27,11 +27,15 @@ class OculusReader:
 
     def __del__(self):
         self.running = False
-        self.thread.join()
+        if hasattr(self, 'thread'):
+            self.thread.join()
 
     @staticmethod
     def process_data(string):
-        array_strings, buttons_string = string.split('&')
+        try:
+            array_strings, buttons_string = string.split('&')
+        except ValueError:
+            return None, None
         split_array_strings = array_strings.split('|')
         arrays = []
         for array_string in split_array_strings:
@@ -57,7 +61,10 @@ class OculusReader:
     def extract_data(self, line):
         output = ''
         if self.tag in line:
-            output += line.split(self.tag + ': ')[1]
+            try:
+                output += line.split(self.tag + ': ')[1]
+            except ValueError:
+                pass
         return output
 
     def get_arays_and_button(self):
