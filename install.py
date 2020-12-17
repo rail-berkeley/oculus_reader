@@ -7,7 +7,11 @@ cfg = yamlreader.yaml_load('config.yml')
 def get_device(retry=0):
     # Default is "127.0.0.1" and 5037
     client = AdbClient(host="127.0.0.1", port=5037)
-    client.remote_connect(cfg['IP_ADDRESS'], cfg['PORT'])
+    try:
+        client.remote_connect(cfg['IP_ADDRESS'], cfg['PORT'])
+    except RuntimeError:
+        os.system('adb devices')
+        client.remote_connect(cfg['IP_ADDRESS'], cfg['PORT'])
 
     device = client.device(cfg['IP_ADDRESS'] + ':' + str(cfg['PORT']))
 

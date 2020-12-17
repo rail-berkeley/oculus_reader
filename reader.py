@@ -2,6 +2,7 @@ from ppadb.client import Client as AdbClient
 from ppadb.client import Client
 from FPS_counter import FPSCounter
 from install import get_device
+from buttons_parser import parse_buttons
 import numpy as np
 
 TAG = 'wE9ryARX5SVzGEER'
@@ -50,10 +51,11 @@ def mat2trans(mat):
     return mat[:3, 3]
 
 
-def parse_arrays(string):
-    array_strings = string.split('|')
+def parse_data(string):
+    array_strings, buttons_string = string.split('&')
+    split_array_strings = array_strings.split('|')
     arrays = []
-    for array_string in array_strings:
+    for array_string in split_array_strings:
         array = np.empty((4,4))
         values = array_string.split(' ')
         c = 0
@@ -70,7 +72,8 @@ def parse_arrays(string):
             count += 1
         if count == 16:
             arrays.append(array)
-    return arrays
+    buttons = parse_buttons(buttons_string)
+    return arrays, buttons
 
 def get_data(text):
     output = ''
@@ -86,11 +89,12 @@ def extract_data(line):
     return output
 
 def print_poses(data):
-    arrays = parse_arrays(data)
+    arrays, buttons = parse_data(data)
     for i, array in enumerate(arrays):
         quat = mat2quat(array[:3, :3])
         trans = mat2trans(array)
         # print(i, ', quat:', quat, 'trans:', trans)
+    print(buttons)
 
 def dump_logcat_by_line(connection):
     file_obj = connection.socket.makefile()
@@ -99,17 +103,15 @@ def dump_logcat_by_line(connection):
             line = file_obj.readline().strip()
             data = extract_data(line)
             if data:
-                # print(data)
-                print_poses(data)
+                    print_poses(data)
                 fps_counter.getAndPrintFPS()
         except UnicodeDecodeError:
             pass
 
     file_obj.close()
     connection.close()
+    print("Closing")
 
 device = get_device()
-device.shell("logcat", handler=dump_logcat_by_line)
-
-# Disconnect all devices
-client.remote_disconnect()
+device.shell('am start -n "com.rail.oculus.teleop/com.rail.oculus.teleop.MainActivity" -a android.intent.action.MAIN -c android.intent.category.LAUNCHER')
+device.shell("logcat -T 0", handler=dump_logcat_by_line)
