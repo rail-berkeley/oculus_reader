@@ -1,4 +1,4 @@
 IP_ADDRESS: '10.0.0.73'
 PORT: 5555
-APK_PATH: 'teleop-debug.apk'
+APK_PATH: 'APK/teleop-debug.apk'
 APK_NAME: 'com.rail.oculus.teleop'

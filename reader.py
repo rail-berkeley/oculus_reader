@@ -14,7 +14,7 @@ class OculusReader:
         self.last_buttons = {}
         self._lock = threading.Lock()
         self.running = True
-        self.tag = 'wE9ryARX5SVzGEER'
+        self.tag = 'wE9ryARX'
 
         self.print_FPS = print_FPS
         if print_FPS:
