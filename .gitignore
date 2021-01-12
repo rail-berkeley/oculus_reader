@@ -146,3 +146,5 @@ cython_debug/
 
 # Local History for Visual Studio Code
 .history/
+
+.vscode/settings.json
