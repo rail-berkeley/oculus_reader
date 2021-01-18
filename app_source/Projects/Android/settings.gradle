@@ -3,5 +3,5 @@ rootProject.name = "OculusTeleop"
 
 include ':', \
 	'VrSamples:SampleFramework:Projects:Android', \
-	'oculus_reader:app:Projects:Android'
+	'oculus_reader:app_source:Projects:Android'
 
