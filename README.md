@@ -4,6 +4,15 @@ For the oculus reader two elements are necessary: python script which receives t
 
 If you intend to use the precompiled APK, please follow the steps here and the README from 'python folder'. If you plan to work on the APK development, additionally follow the README from 
 
+## Setup Git LFS for APK
+
+To pull the APK correctly, Git LFS has to be configured. The installation is described here https://git-lfs.github.com. On Ubuntu follow these steps:
+```
+curl -s https://packagecloud.io/install/repositories/github/git-lfs/script.deb.sh | sudo bash
+sudo apt-get install git-lfs
+git lfs install # has to be run only once on a single user account
+```
+
 ## Setup of the ADB
 
 For the communication between  [Android Debug Bridge](https://developer.android.com/studio/command-line/adb) 
@@ -51,7 +60,7 @@ d. You will be able to see your username on the following screen:
 
 3. Install ADB. On Ubuntu: `sudo apt install android-tools-adb`. On other systems follow the steps from the 'app' folder.
 
-## Run teleoperation
+## How to run
 
 After following README in either in 'python' or 'app' folder, the system is ready for the teleoperation with reader folder.
 
