@@ -2,7 +2,8 @@ from ppadb.client import Client as AdbClient
 import yaml
 import os
 
-cfg = yaml.load(open('config.yml', 'r'), Loader=yaml.CLoader)
+current_dir = os.path.dirname(os.path.realpath(__file__))
+cfg = yaml.load(open(current_dir + '/config.yml', 'r'), Loader=yaml.CLoader)
 
 def get_device(retry=0):
     # Default is "127.0.0.1" and 5037
