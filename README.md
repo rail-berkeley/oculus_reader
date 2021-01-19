@@ -12,6 +12,11 @@ curl -s https://packagecloud.io/install/repositories/github/git-lfs/script.deb.s
 sudo apt-get install git-lfs
 git lfs install # has to be run only once on a single user account
 ```
+If you are using HTTPS protocol, you can reduce the number of authentification prompts when pushing/pulling with:
+```
+git config lfs.https://github.com/rail-berkeley/oculus_reader.git/info/lfs.locksverify false
+```
+You should run this command from repository workspace.
 
 ## Setup of the ADB
 
