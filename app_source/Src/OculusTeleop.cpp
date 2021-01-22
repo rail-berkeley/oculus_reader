@@ -962,6 +962,13 @@ void main()
         return OVRFW::ovrApplFrameOut();
     }
 
+    std::string ovrVrInputStandard::TransformationMatrixToString(const OVR::Matrix4f& transformationMatrix) {
+        const size_t size = 256;
+        char buffer[size];
+        transformationMatrix.ToString(buffer, size);
+        return std::string(buffer);
+    }
+
     void ovrVrInputStandard::RenderRunningFrame(
             const OVRFW::ovrApplFrameIn& in,
             OVRFW::ovrRendererOutput& out) {
@@ -1239,7 +1246,7 @@ void main()
             const OVR::Matrix4f handPoseMatrix = OVR::Matrix4f(handPose);
             const OVR::Matrix4f headPoseMatrix = OVR::Matrix4f(headPose);
             OVR::Matrix4f handPoseMatrixHeadCoord(Matrix4f::NoInit);
-            OVR::Matrix4f::Multiply(&handPoseMatrixHeadCoord, headPoseMatrix.Transposed(), handPoseMatrix);
+            OVR::Matrix4f::Multiply(&handPoseMatrixHeadCoord, headPoseMatrix.Inverted(), handPoseMatrix);
             handPoseTransformations.push_back(handPoseMatrixHeadCoord);
             TransformMatrices[axisSurfaces++] = handPoseMatrix;
 //            TransformMatrices[axisSurfaces++] = matDeviceModel;
@@ -1255,12 +1262,9 @@ void main()
         std::ostringstream ss;
         bool first = true;
         for(auto it = std::begin(handPoseTransformations); it != std::end(handPoseTransformations); ++it) {
-            const size_t size = 256;
-            char buffer[size];
-            it->ToString(buffer, size);
             if (!first)
                 ss << '|';
-            ss << buffer;
+            ss << TransformationMatrixToString(*it);
             first = false;
         }
         ss << "&" << Buttons->current_to_string();

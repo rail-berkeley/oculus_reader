@@ -506,6 +506,8 @@ namespace OVRFW {
 
         void SubmitCompositorLayers(const ovrApplFrameIn& in, ovrRendererOutput& out);
 
+        static std::string TransformationMatrixToString(const OVR::Matrix4f& transformationMatrix);
+
         class OvrGuiSys& GetGuiSys() {
             return *GuiSys;
         }
