@@ -1221,7 +1221,7 @@ void main()
         BeamRenderer->RenderEyeView(out.FrameMatrices.CenterView, projectionMatrix, out.Surfaces);
 
         int axisSurfaces = 0;
-        std::vector<OVR::Matrix4f> handPoseTransformations;
+        std::vector<std::pair<char, OVR::Matrix4f>> handPoseTransformations;
 
         // add the controller model surfaces to the list of surfaces to render
         for (int i = 0; i < (int)InputDevices.size(); ++i) {
@@ -1239,6 +1239,7 @@ void main()
                 continue;
             }
             ovrInputDeviceHandBase& trDevice = *static_cast<ovrInputDeviceHandBase*>(device);
+            const char side = trDevice.IsLeftHand() ? 'l' : 'r';
 
             const Posef& handPose = trDevice.GetHandPose();
             const Posef& headPose = trDevice.GetHeadPose();
@@ -1247,7 +1248,7 @@ void main()
             const OVR::Matrix4f headPoseMatrix = OVR::Matrix4f(headPose);
             OVR::Matrix4f handPoseMatrixHeadCoord(Matrix4f::NoInit);
             OVR::Matrix4f::Multiply(&handPoseMatrixHeadCoord, headPoseMatrix.Inverted(), handPoseMatrix);
-            handPoseTransformations.push_back(handPoseMatrixHeadCoord);
+            handPoseTransformations.push_back(std::make_pair(side, handPoseMatrixHeadCoord));
             TransformMatrices[axisSurfaces++] = handPoseMatrix;
 //            TransformMatrices[axisSurfaces++] = matDeviceModel;
 //            TransformMatrices[axisSurfaces++] = trDevice.GetPointerMatrix();
@@ -1264,7 +1265,9 @@ void main()
         for(auto it = std::begin(handPoseTransformations); it != std::end(handPoseTransformations); ++it) {
             if (!first)
                 ss << '|';
-            ss << TransformationMatrixToString(*it);
+            char side = it->first;
+            const OVR::Matrix4f& transformationMatrix = it->second;
+            ss << side << ":" << TransformationMatrixToString(transformationMatrix);
             first = false;
         }
         ss << "&" << Buttons->current_to_string();

@@ -10,7 +10,7 @@ import time
 
 class OculusReader:
     def __init__(self, print_FPS=False):
-        self.last_pose_arrays = []
+        self.last_transforms = {}
         self.last_buttons = {}
         self._lock = threading.Lock()
         self.running = True
@@ -33,30 +33,35 @@ class OculusReader:
     @staticmethod
     def process_data(string):
         try:
-            array_strings, buttons_string = string.split('&')
+            transforms_string, buttons_string = string.split('&')
         except ValueError:
             return None, None
-        split_array_strings = array_strings.split('|')
-        arrays = []
-        for array_string in split_array_strings:
-            array = np.empty((4,4))
-            values = array_string.split(' ')
+        split_transform_strings = transforms_string.split('|')
+        transforms = {}
+        for pair_string in split_transform_strings:
+            transform = np.empty((4,4))
+            pair = pair_string.split(':')
+            if len(pair) != 2:
+                continue
+            left_right_char = pair[0] # is r or l
+            transform_string = pair[1]
+            values = transform_string.split(' ')
             c = 0
             r = 0
             count = 0
             for value in values:
                 if not value:
                     continue
-                array[r][c] = float(value)
+                transform[r][c] = float(value)
                 c += 1
                 if c >= 4:
                     c = 0
                     r += 1
                 count += 1
             if count == 16:
-                arrays.append(array)
+                transforms[left_right_char] = transform
         buttons = parse_buttons(buttons_string)
-        return arrays, buttons
+        return transforms, buttons
 
     def extract_data(self, line):
         output = ''
@@ -67,9 +72,9 @@ class OculusReader:
                 pass
         return output
 
-    def get_arays_and_button(self):
+    def get_transformations_and_buttons(self):
         with self._lock:
-            return self.last_pose_arrays, self.last_buttons
+            return self.last_transforms, self.last_buttons
 
     def read_logcat_by_line(self, connection):
         file_obj = connection.socket.makefile()
@@ -78,9 +83,9 @@ class OculusReader:
                 line = file_obj.readline().strip()
                 data = self.extract_data(line)
                 if data:
-                    pose_arrays, buttons = OculusReader.process_data(data)
+                    transforms, buttons = OculusReader.process_data(data)
                     with self._lock:
-                        self.last_pose_arrays, self.last_buttons = pose_arrays, buttons
+                        self.last_transforms, self.last_buttons = transforms, buttons
                     if self.print_FPS:
                         self.fps_counter.getAndPrintFPS()
             except UnicodeDecodeError:
@@ -94,7 +99,7 @@ def main():
 
     while True:
         time.sleep(3)
-        print(oculus_reader.get_arays_and_button())
+        print(oculus_reader.get_transformations_and_buttons())
 
 
 if __name__ == '__main__':
