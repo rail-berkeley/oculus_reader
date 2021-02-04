@@ -1,7 +1,4 @@
-from ppadb.client import Client as AdbClient
-from ppadb.client import Client
-import sys
-if sys.version_info[0] == 2:
+if __name__ == '__main__':
     from FPS_counter import FPSCounter
     from install import get_device
     from buttons_parser import parse_buttons
@@ -105,7 +102,7 @@ def main():
     oculus_reader = OculusReader()
 
     while True:
-        time.sleep(3)
+        time.sleep(0.3)
         print(oculus_reader.get_transformations_and_buttons())
 
 
