@@ -137,17 +137,14 @@ dmypy.json
 # Cython debug symbols
 cython_debug/
 
-.vscode/*
-!.vscode/settings.json
-!.vscode/tasks.json
-!.vscode/launch.json
-!.vscode/extensions.json
-*.code-workspace
+*/.vscode/*
+!*/.vscode/tasks.json
+!*/.vscode/launch.json
+!*/.vscode/extensions.json
+*/*.code-workspace
 
 # Local History for Visual Studio Code
 .history/
-
-.vscode/settings.json
 
 # Project relevant
 app_source/Projects/Android/.idea/caches/

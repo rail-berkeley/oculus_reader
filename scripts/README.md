@@ -1,0 +1,7 @@
+First follow then steps from [README.dm](../README.md) in the repository root. Then please install the packages from *requirements.txt* and continue the introduction in [README.dm](../README.md) in the root folder to run the code.
+
+## Scripts description
+
+The script *reader.py* will automatically install the APK to the connected Oculus Quest and start program. By default it uses the APK delivered with the repository. If you decide to compile your own version of the app with the code from *app_source* folder, please adjust the path in *config.yml*.
+
+Use script *install.py* to reinstall or uninstall the APK from connected Oculus Quest.
