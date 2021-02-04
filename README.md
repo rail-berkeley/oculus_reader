@@ -2,11 +2,11 @@
 
 This repository provides the tool to read the position and pressed button from the Oculus Quest device.
 
-Oculus reader uses two elements to work: python script which receives the readings from the APK and the APK itself. Currently the pose of the controllers and pressed buttons are transfered from the APK and this can be extended using provided APK [app_source](source code).
+Oculus reader consits of two elements: python script which receives the readings from the APK and the APK itself. Currently the pose of the controllers and pressed buttons are transfered from the APK. This behavior can be extended using provided APK [source code](app_source).
 
 ## Clone the repository
 
-To pull the APK correctly, Git LFS has to be configured. The installation is described here https://git-lfs.github.com. On Ubuntu follow these steps:
+To pull the APK correctly, Git LFS has to be configured before cloning the repository. The installation is described here https://git-lfs.github.com. On Ubuntu follow these steps:
 
 ```bash
 curl -s https://packagecloud.io/install/repositories/github/git-lfs/script.deb.sh | sudo bash
@@ -16,19 +16,19 @@ git lfs install # has to be run only once on a single user account
 
 Now you can clone this repository either with HTTPS or SSH.
 
-If you decide to use HTTPS protocol, you can reduce the number of authentification prompts when pushing/pulling caused by Git LFS with:
+If you decide to use the HTTPS protocol, you can reduce the number of authentification prompts when pushing/pulling caused by Git LFS with:
 
 ```bash
 git config lfs.https://github.com/rail-berkeley/oculus_reader.git/info/lfs.locksverify false
 ```
 
-This command has to be run from repository workspace.
+This command has to be run from the repository workspace.
 
 ## Setup of the ADB
 
 ADB is required for the communication between Oculus Quest and the python reader script [Android Debug Bridge](https://developer.android.com/studio/command-line/adb). This introduction is created based on <https://developer.oculus.com/documentation/native/android/book-intro/>.
 
-1. Determine you Oculus Quest account name:
+1. Determine your Oculus Quest account name:
 If you haven’t used Oculus Quest before, start it and follow the steps to create your profile and get yourself started. Otherwise follow these steps to find out your username:
     1. Go to: [https://www.oculus.com/](https://www.oculus.com/) 
     2. Log in to account:
@@ -53,15 +53,15 @@ If you haven’t used Oculus Quest before, start it and follow the steps to crea
 
 3. Install ADB. On Ubuntu: `sudo apt install android-tools-adb`. On other systems follow the steps from the 'app_source' folder.
 
-Now, If you intend to use the precompiled APK with the predefined behavior, where the position and the pressed buttons are transferred, please follow the steps from the [scripts/README.md](scripts folder). If you plan to extend the APP, please read the README from the [app_source/README.md](app_source folder).
+Now, if you intend to use the precompiled APK with the predefined behavior, where the position and the pressed buttons are transferred, please follow the steps from the [scripts folder](scripts/README.md). If you plan to extend the app, please read the README from the [app_source folder](app_source/README.md).
 
-## How to run the python reader.py code
+## How to run the code
 
 After following README in either in *scripts* or/and *app_source* folder, the system is ready for the teleoperation.
 
 1. Make sure that Oculus Quest is connected to the same network as the computer.
-2. Connect Oculus Quest to PC with USB cable.
-3. Verify that a device is visible with: `adb devices`. Expected output:
+2. Connect Oculus Quest to PC with USB cable. This is required to establish the connection.
+3. Verify that a device is visible with: `adb devices`. The expected output:
 `List of devices attached
 
     ce0551e7                device`
@@ -73,3 +73,4 @@ After following README in either in *scripts* or/and *app_source* folder, the sy
 5. Copy the IP address of the device standing after `**src`.
 6. Save the IP address in the *config.yaml* file. Port no. in the file can remain unchanged.
 7. Run `python scripts/reader.py`
+8. (optional) The current transformation can be visualized using the script [visualize_oculus_transforms.py](scripts/visualize_oculus_transforms.py).
