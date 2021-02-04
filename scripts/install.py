@@ -48,7 +48,7 @@ def reinstall(device):
 def main():
     import argparse
 
-    parser = argparse.ArgumentParser(description='Utility to manage teleoperation APK. Installs APK by default.')
+    parser = argparse.ArgumentParser(description='Utility to manage teleoperation APK. Installs APK if no arguments are provided.')
     parser.add_argument("--reinstall", action="store_true", help='reinstalls APK from the default path')
     parser.add_argument("--uninstall", action="store_true", help='uninstalls APK')
     args = parser.parse_args()
