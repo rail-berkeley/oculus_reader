@@ -1,8 +1,15 @@
 from ppadb.client import Client as AdbClient
 from ppadb.client import Client
-from FPS_counter import FPSCounter
-from install import get_device
-from buttons_parser import parse_buttons
+import sys
+if sys.version_info[0] == 2:
+    from FPS_counter import FPSCounter
+    from install import get_device
+    from buttons_parser import parse_buttons
+else:
+    from .FPS_counter import FPSCounter
+    from .install import get_device
+    from .buttons_parser import parse_buttons
+
 import numpy as np
 import threading
 import time
