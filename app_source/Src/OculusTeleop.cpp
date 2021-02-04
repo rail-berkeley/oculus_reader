@@ -963,7 +963,7 @@ void main()
     }
 
     std::string ovrVrInputStandard::TransformationMatrixToString(const OVR::Matrix4f& transformationMatrix) {
-        const size_t size = 256;
+        const size_t size = 512;
         char buffer[size];
         transformationMatrix.ToString(buffer, size);
         return std::string(buffer);
