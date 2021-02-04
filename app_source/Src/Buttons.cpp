@@ -3,25 +3,24 @@
 //
 
 #include "Buttons.h"
+#include "Misc/Log.h"
 
 namespace OVRFW {
     void Buttons::update_buttons(
             ovrInputStateTrackedRemote remoteInputState, const ovrHandedness controllerHand) {
         if (controllerHand == VRAPI_HAND_LEFT) {
             leftRemoteInputState_ = remoteInputState;
-            leftAvailable_ = true;
         }
         else {
             rightRemoteInputState_ = remoteInputState;
-            rightAvailable_ = true;
         }
     }
 
-    std::string Buttons::current_to_string() {
+    std::string Buttons::current_to_string(char side) const {
         std::string text = "";
         // right hand
-        if (rightAvailable_) {
-            text += "R,"; // right hand available
+        if (side == 'r') {
+            text += "R,"; // tell that right hand is available
             ovrInputStateTrackedRemote remoteInputState = rightRemoteInputState_;
             if (remoteInputState.Buttons & ovrButton_A)
                 text += "A,";
@@ -41,10 +40,8 @@ namespace OVRFW {
             text += "rightGrip " + std::to_string(remoteInputState.GripTrigger);
         }
         // left hand
-        if (leftAvailable_) {
-            if (rightAvailable_)
-                text += ",";
-            text += "L,"; // left hand available
+        else if (side == 'l') {
+            text += "L,"; // tell that left hand is available
             ovrInputStateTrackedRemote remoteInputState = leftRemoteInputState_;
             if (remoteInputState.Buttons & ovrButton_X)
                 text += "X,";
@@ -62,6 +59,9 @@ namespace OVRFW {
                     std::to_string(remoteInputState.Joystick.y) + ",";
             text += "leftTrig " + std::to_string(remoteInputState.IndexTrigger) + ",";
             text += "leftGrip " + std::to_string(remoteInputState.GripTrigger);
+        }
+        else {
+            __android_log_print(ANDROID_LOG_ERROR, "RAILOculusTeleop", "Side value neither l nor r in Buttons::current_to_string");
         }
         return text;
     }

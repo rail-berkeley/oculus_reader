@@ -1260,18 +1260,21 @@ void main()
         }
 
         // send values
-        std::ostringstream ss;
+        std::ostringstream output_ss, buttons_ss;
         bool first = true;
         for(auto it = std::begin(handPoseTransformations); it != std::end(handPoseTransformations); ++it) {
-            if (!first)
-                ss << '|';
+            if (!first) {
+                output_ss << '|';
+                buttons_ss << ",";
+            }
             char side = it->first;
             const OVR::Matrix4f& transformationMatrix = it->second;
-            ss << side << ":" << TransformationMatrixToString(transformationMatrix);
+            output_ss << side << ":" << TransformationMatrixToString(transformationMatrix);
+            buttons_ss << Buttons->current_to_string(side);
             first = false;
         }
-        ss << "&" << Buttons->current_to_string();
-        __android_log_print(ANDROID_LOG_INFO, "wE9ryARX", "%s", ss.str().c_str());
+        output_ss << "&" << buttons_ss.str();
+        __android_log_print(ANDROID_LOG_INFO, "wE9ryARX", "%s", output_ss.str().c_str());
 
         // Add axis
         if (SampleConfiguration.RenderAxis && AxisSurface.surface != nullptr) {

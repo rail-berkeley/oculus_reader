@@ -15,11 +15,9 @@ namespace OVRFW {
     public:
         void update_buttons(
                 ovrInputStateTrackedRemote remoteInputState, const ovrHandedness controllerHand);
-        std::string current_to_string();
+        std::string current_to_string(char side) const;
 
     private:
-        bool leftAvailable_ = false;
-        bool rightAvailable_ = false;
         ovrInputStateTrackedRemote leftRemoteInputState_;
         ovrInputStateTrackedRemote rightRemoteInputState_;
     };
