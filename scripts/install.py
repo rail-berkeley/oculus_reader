@@ -27,22 +27,32 @@ def get_device(retry=0):
             get_device(retry=retry+1)
     return device
 
-def install(device):
-     # Check apk is installed
+def install(device, verbose=True):
     installed = device.is_installed(cfg['APK_NAME'])
     if not installed:
         device.install(cfg['APK_PATH'], test=True)
-    print('APK is installed.')
+        installed = device.is_installed(cfg['APK_NAME'])
+        if installed:
+            print('APK installed successfully.')
+        else:
+            print('APK install failed.')
+    elif verbose:
+            print('APK is already installed.')
 
-def uninstall(device):
-     # Check apk is installed
+def uninstall(device, verbose=True):
     installed = device.is_installed(cfg['APK_NAME'])
     if installed:
         device.uninstall(cfg['APK_NAME'])
-    print('APK is uninstalled.')
+        installed = device.is_installed(cfg['APK_NAME'])
+        if installed:
+            print('APK uninstall failed')
+        else:
+            print('APK uninstalled successfully.')
+    elif verbose:
+        print('APK is not installed.')
 
 def reinstall(device):
-    uninstall(device)
+    uninstall(device, verbose=False)
     install(device)
 
 def main():

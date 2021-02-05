@@ -1,10 +1,10 @@
 if __name__ == '__main__':
     from FPS_counter import FPSCounter
-    from install import get_device
+    from install import get_device, install
     from buttons_parser import parse_buttons
 else:
     from .FPS_counter import FPSCounter
-    from .install import get_device
+    from .install import get_device, install
     from .buttons_parser import parse_buttons
 
 import numpy as np
@@ -25,6 +25,7 @@ class OculusReader:
             self.fps_counter = FPSCounter()
 
         device = get_device()
+        install(device, verbose=False)
         device.shell('am start -n "com.rail.oculus.teleop/com.rail.oculus.teleop.MainActivity" -a android.intent.action.MAIN -c android.intent.category.LAUNCHER')
         self.thread = threading.Thread(target=device.shell, args=("logcat -T 0", self.read_logcat_by_line))
         self.thread.start()
