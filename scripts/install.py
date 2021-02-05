@@ -3,7 +3,12 @@ import yaml
 import os
 
 current_dir = os.path.dirname(os.path.realpath(__file__))
-cfg = yaml.load(open(current_dir + '/config.yml', 'r'), Loader=yaml.CLoader)
+config_path = current_dir + '/config.yml'
+if not os.path.exists(config_path):
+    print("Please copy config_example.yml to config.yml and adjust the specified IP address.")
+    print("To this end, please follow the 'How to run the code' section of README.md in the project's root folder")
+    exit(1)
+cfg = yaml.load(open(config_path, 'r'), Loader=yaml.CLoader)
 
 def get_device(retry=0):
     # Default is "127.0.0.1" and 5037
@@ -20,8 +25,8 @@ def get_device(retry=0):
         if retry==1:
             os.system('adb tcpip ' + str(cfg['PORT']))
         if retry==2:
-            print('Make sure that device is running and is available at specified IP address.')
-            print('Run `adb shell ip route` to verify.')
+            print('Make sure that device is running and is available at the IP address specified in config.yml.')
+            print('Run `adb shell ip route` to verify the IP address.')
             exit(1)
         else:
             get_device(retry=retry+1)

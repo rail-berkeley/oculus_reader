@@ -71,6 +71,7 @@ After following README in either in *scripts* or/and *app_source* folder, the sy
     Expected output:  
     `10.0.30.0/19 dev wlan0  proto kernel  scope link  **src **10.0.32.101`
 5. Copy the IP address of the device standing after `**src`.
-6. Save the IP address in the *config.yaml* file. Port no. in the file can remain unchanged.
-7. Run `python scripts/reader.py`
-8. (optional) The current transformation can be visualized using the script [visualize_oculus_transforms.py](scripts/visualize_oculus_transforms.py).
+6. Copy *config_example.yml* to *config.yml*.
+7. Save the IP address in the created *config.yml* file. Port no. in the file can remain unchanged.
+8. Run `python scripts/reader.py`
+9. (optional) The current transformation can be visualized using the script [visualize_oculus_transforms.py](scripts/visualize_oculus_transforms.py).
