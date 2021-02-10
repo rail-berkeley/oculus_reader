@@ -1,6 +1,6 @@
 This folder includes the source code of the Oculus Quest APK delivered in the repository. Use it if you intend to customize the app. Before following this instruction, please read the [README.md](../README.md) in the repository root folder.
 
-In order to compile the code you need to download the Oculus Quest SDK ([link](https://developer.oculus.com/downloads/package/oculus-mobile-sdk/)) and **place this repository in the root folder of the unpacked SDK**. Please keep the repository name as 'oculus_reader' to conform to the predefined project configuration.
+In order to compile the code you need to download the Oculus Quest SDK version 1.37.0 ([link](https://developer.oculus.com/downloads/package/oculus-mobile-sdk/1.37.0/)) and **place this repository in the root folder of the unpacked SDK**. Please keep the repository name as 'oculus_reader' to conform to the predefined project configuration.
 
 ## Development
 
