@@ -32,12 +32,12 @@ def get_device(retry=0):
             get_device(retry=retry+1)
     return device
 
-def install(device, verbose=True):
+def install(device, verbose=True, reinstall=False):
     installed = device.is_installed(cfg['APK_NAME'])
-    if not installed:
-        device.install(cfg['APK_PATH'], test=True)
+    if not installed or reinstall:
+        success = device.install(cfg['APK_PATH'], test=True, reinstall=reinstall)
         installed = device.is_installed(cfg['APK_NAME'])
-        if installed:
+        if installed and success:
             print('APK installed successfully.')
         else:
             print('APK install failed.')
@@ -47,18 +47,16 @@ def install(device, verbose=True):
 def uninstall(device, verbose=True):
     installed = device.is_installed(cfg['APK_NAME'])
     if installed:
-        device.uninstall(cfg['APK_NAME'])
+        success = device.uninstall(cfg['APK_NAME'])
         installed = device.is_installed(cfg['APK_NAME'])
-        if installed:
-            print('APK uninstall failed')
+        if not installed and success:
+            print('APK uninstall finished.')
+            print('Please verify if the app disappeared from the list as described in "UNINSTALL.md".')
+            print('For the resolution of this issue, please follow https://github.com/Swind/pure-python-adb/issues/71.')
         else:
-            print('APK uninstalled successfully.')
+            print('APK uninstall failed')
     elif verbose:
         print('APK is not installed.')
-
-def reinstall(device):
-    uninstall(device, verbose=False)
-    install(device)
 
 def main():
     import argparse
@@ -71,7 +69,7 @@ def main():
     device = get_device()
 
     if args.reinstall:
-        reinstall(device)
+        install(device, reinstall=True)
     elif args.uninstall:
         uninstall(device)
     else:
