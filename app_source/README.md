@@ -21,4 +21,4 @@ In order to compile the code you need to download the Oculus Quest SDK version 1
 
 ## Run the code
 
-Follow the instruction in [scripts/README.md](../scripts/README.md) to install the required packages, configure path to new the APK (as described in the same README file), and then finish up with the [README.md](../README.md) in the root folder to run the code.
+Follow the instruction in [oculus_reader/README.md](../oculus_reader/README.md) to install the required packages, configure path to new the APK (as described in the same README file), and then finish up with the [README.md](../README.md) in the root folder to run the code.

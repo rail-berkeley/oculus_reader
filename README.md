@@ -53,11 +53,11 @@ If you haven’t used Oculus Quest before, start it and follow the steps to crea
 
 3. Install ADB. On Ubuntu: `sudo apt install android-tools-adb`. On other systems follow the steps from the 'app_source' folder.
 
-Now, if you intend to use the precompiled APK with the predefined behavior, where the position and the pressed buttons are transferred, please follow the steps from the [scripts folder](scripts/README.md). If you plan to extend the app, please read the README from the [app_source folder](app_source/README.md).
+Now, if you intend to use the precompiled APK with the predefined behavior, where the position and the pressed buttons are transferred, please follow the steps from the [scripts folder](oculus_reader/README.md). If you plan to extend the app, please read the README from the [app_source folder](app_source/README.md).
 
 ## How to run the code
 
-After following README in either in *scripts* or/and *app_source* folder, the system is ready for the teleoperation.
+After following README in either in *oculus_reader* or/and *app_source* folder, the system is ready for the teleoperation.
 
 1. Make sure that Oculus Quest is connected to the same network as the computer.
 2. Connect Oculus Quest to PC with USB cable. This is required to establish the connection.
@@ -70,8 +70,7 @@ After following README in either in *scripts* or/and *app_source* folder, the sy
     `adb shell ip route`  
     Expected output:  
     `10.0.30.0/19 dev wlan0  proto kernel  scope link  **src **10.0.32.101`
-5. Copy the IP address of the device standing after `**src`.
-6. Copy *config_example.yml* to *config.yml*.
-7. Save the IP address in the created *config.yml* file. Port no. in the file can remain unchanged.
-8. Run `python scripts/reader.py`
-9. (optional) The current transformation can be visualized using the script [visualize_oculus_transforms.py](scripts/visualize_oculus_transforms.py).
+5. Read the IP address of the device standing after `**src`.
+6. Provide the IP address when creating OculusReader object.
+8. Run `python oculus_reader/reader.py`
+9. (optional) The current transformation can be visualized using the script [visualize_oculus_transforms.py](oculus_reader/visualize_oculus_transforms.py).

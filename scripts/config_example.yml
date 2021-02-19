@@ -1,4 +1,0 @@
-IP_ADDRESS: '192.168.0.125'
-PORT: 5555
-APK_PATH: 'APK/teleop-debug.apk'
-APK_NAME: 'com.rail.oculus.teleop'
