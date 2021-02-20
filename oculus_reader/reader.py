@@ -9,7 +9,7 @@ from ppadb.client import Client as AdbClient
 
 class OculusReader:
     def __init__(self,
-            ip_address,
+            ip_address=None,
             port = 5555,
             APK_name='com.rail.oculus.teleop',
             print_FPS=False,
@@ -47,9 +47,7 @@ class OculusReader:
         if hasattr(self, 'thread'):
             self.thread.join()
 
-    def get_device(self, retry=0):
-        # Default is "127.0.0.1" and 5037
-        client = AdbClient(host="127.0.0.1", port=5037)
+    def get_network_device(self, client, retry=0):
         try:
             client.remote_connect(self.ip_address, self.port)
         except RuntimeError:
@@ -67,34 +65,63 @@ class OculusReader:
                 print('Run `adb shell ip route` to verify the IP address.')
                 exit(1)
             else:
-                self.get_device(retry=retry+1)
+                self.get_device(client=client, retry=retry+1)
         return device
 
+    def get_usb_debice(self, client):
+        for device in client.devices():
+            if device.serial.count('.') < 3:
+                return device
+        print('Device not found. Make sure that device is running and is connected over USB')
+        print('Run `adb devices` to verify that the device is visible.')
+        print('If you see "no permissions" next to the device serial, please put on the Oculus Quest and allow the access.')
+        exit(1)
+
+    def get_device(self):
+        # Default is "127.0.0.1" and 5037
+        client = AdbClient(host="127.0.0.1", port=5037)
+        if self.ip_address is not None:
+            return self.get_network_device(client)
+        else:
+            return self.get_usb_debice(client)
+
     def install(self, APK_path='APK/teleop-debug.apk', verbose=True, reinstall=False):
-        installed = self.device.is_installed(self.APK_name)
-        if not installed or reinstall:
-            success = self.device.install(APK_path, test=True, reinstall=reinstall)
+        try:
             installed = self.device.is_installed(self.APK_name)
-            if installed and success:
-                print('APK installed successfully.')
-            else:
-                print('APK install failed.')
-        elif verbose:
-            print('APK is already installed.')
+            if not installed or reinstall:
+                success = self.device.install(APK_path, test=True, reinstall=reinstall)
+                installed = self.device.is_installed(self.APK_name)
+                if installed and success:
+                    print('APK installed successfully.')
+                else:
+                    print('APK install failed.')
+            elif verbose:
+                print('APK is already installed.')
+        except RuntimeError:
+            print('Device is visible but could not be accessed.')
+            print('Run `adb devices` to verify that the device is visible and accessible.')
+            print('If you see "no permissions" next to the device serial, please put on the Oculus Quest and allow the access.')
+            exit(1)
 
     def uninstall(self, verbose=True):
-        installed = self.device.is_installed(self.APK_name)
-        if installed:
-            success = self.device.uninstall(self.APK_name)
+        try:
             installed = self.device.is_installed(self.APK_name)
-            if not installed and success:
-                print('APK uninstall finished.')
-                print('Please verify if the app disappeared from the list as described in "UNINSTALL.md".')
-                print('For the resolution of this issue, please follow https://github.com/Swind/pure-python-adb/issues/71.')
-            else:
-                print('APK uninstall failed')
-        elif verbose:
-            print('APK is not installed.')
+            if installed:
+                success = self.device.uninstall(self.APK_name)
+                installed = self.device.is_installed(self.APK_name)
+                if not installed and success:
+                    print('APK uninstall finished.')
+                    print('Please verify if the app disappeared from the list as described in "UNINSTALL.md".')
+                    print('For the resolution of this issue, please follow https://github.com/Swind/pure-python-adb/issues/71.')
+                else:
+                    print('APK uninstall failed')
+            elif verbose:
+                print('APK is not installed.')
+        except RuntimeError:
+            print('Device is visible but could not be accessed.')
+            print('Run `adb devices` to verify that the device is visible and accessible.')
+            print('If you see "no permissions" next to the device serial, please put on the Oculus Quest and allow the access.')
+            exit(1)
 
     @staticmethod
     def process_data(string):
@@ -161,7 +188,7 @@ class OculusReader:
 
 
 def main():
-    oculus_reader = OculusReader(ip_address='10.0.0.73')
+    oculus_reader = OculusReader()
 
     while True:
         time.sleep(0.3)

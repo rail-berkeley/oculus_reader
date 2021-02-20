@@ -8,7 +8,7 @@ def main():
     parser.add_argument("--uninstall", action="store_true", help='uninstalls APK')
     args = parser.parse_args()
 
-    reader = OculusReader(ip_address='10.0.0.73', run=False)
+    reader = OculusReader(run=False)
 
     if args.reinstall:
         reader.install(reinstall=True)
