@@ -5,7 +5,10 @@ import threading
 import time
 import os
 from ppadb.client import Client as AdbClient
+import sys
 
+def eprint(*args, **kwargs):
+    print(*args, file=sys.stderr, **kwargs)
 
 class OculusReader:
     def __init__(self,
@@ -60,9 +63,9 @@ class OculusReader:
             if retry==1:
                 os.system('adb tcpip ' + str(self.port))
             if retry==2:
-                print('Make sure that device is running and is available at the IP address specified as the OculusReader argument `ip_address`.')
-                print('Currently provided IP address:', self.ip_address)
-                print('Run `adb shell ip route` to verify the IP address.')
+                eprint('Make sure that device is running and is available at the IP address specified as the OculusReader argument `ip_address`.')
+                eprint('Currently provided IP address:', self.ip_address)
+                eprint('Run `adb shell ip route` to verify the IP address.')
                 exit(1)
             else:
                 self.get_device(client=client, retry=retry+1)
@@ -72,9 +75,9 @@ class OculusReader:
         for device in client.devices():
             if device.serial.count('.') < 3:
                 return device
-        print('Device not found. Make sure that device is running and is connected over USB')
-        print('Run `adb devices` to verify that the device is visible.')
-        print('If you see "no permissions" next to the device serial, please put on the Oculus Quest and allow the access.')
+        eprint('Device not found. Make sure that device is running and is connected over USB')
+        eprint('Run `adb devices` to verify that the device is visible.')
+        eprint('If you see "no permissions" next to the device serial, please put on the Oculus Quest and allow the access.')
         exit(1)
 
     def get_device(self):
@@ -94,13 +97,13 @@ class OculusReader:
                 if installed and success:
                     print('APK installed successfully.')
                 else:
-                    print('APK install failed.')
+                    eprint('APK install failed.')
             elif verbose:
                 print('APK is already installed.')
         except RuntimeError:
-            print('Device is visible but could not be accessed.')
-            print('Run `adb devices` to verify that the device is visible and accessible.')
-            print('If you see "no permissions" next to the device serial, please put on the Oculus Quest and allow the access.')
+            eprint('Device is visible but could not be accessed.')
+            eprint('Run `adb devices` to verify that the device is visible and accessible.')
+            eprint('If you see "no permissions" next to the device serial, please put on the Oculus Quest and allow the access.')
             exit(1)
 
     def uninstall(self, verbose=True):
@@ -114,13 +117,13 @@ class OculusReader:
                     print('Please verify if the app disappeared from the list as described in "UNINSTALL.md".')
                     print('For the resolution of this issue, please follow https://github.com/Swind/pure-python-adb/issues/71.')
                 else:
-                    print('APK uninstall failed')
+                    eprint('APK uninstall failed')
             elif verbose:
                 print('APK is not installed.')
         except RuntimeError:
-            print('Device is visible but could not be accessed.')
-            print('Run `adb devices` to verify that the device is visible and accessible.')
-            print('If you see "no permissions" next to the device serial, please put on the Oculus Quest and allow the access.')
+            eprint('Device is visible but could not be accessed.')
+            eprint('Run `adb devices` to verify that the device is visible and accessible.')
+            eprint('If you see "no permissions" next to the device serial, please put on the Oculus Quest and allow the access.')
             exit(1)
 
     @staticmethod
