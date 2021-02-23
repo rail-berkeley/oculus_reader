@@ -51,12 +51,6 @@ class OculusReader:
             self.thread.join()
 
     def get_network_device(self, client, retry=0):
-        try:
-            client.remote_connect(self.ip_address, self.port)
-        except RuntimeError:
-            os.system('adb devices')
-            client.remote_connect(self.ip_address, self.port)
-
         device = client.device(self.ip_address + ':' + str(self.port))
 
         if device is None:
@@ -83,6 +77,11 @@ class OculusReader:
     def get_device(self):
         # Default is "127.0.0.1" and 5037
         client = AdbClient(host="127.0.0.1", port=5037)
+        try:
+            client.remote_connect(self.ip_address, self.port)
+        except RuntimeError:
+            os.system('adb devices')
+            client.remote_connect(self.ip_address, self.port)
         if self.ip_address is not None:
             return self.get_network_device(client)
         else:
