@@ -70,7 +70,7 @@ class OculusReader:
                 self.get_device(client=client, retry=retry+1)
         return device
 
-    def get_usb_debice(self, client):
+    def get_usb_device(self, client):
         try:
             devices = client.devices()
         except RuntimeError:
@@ -90,7 +90,7 @@ class OculusReader:
         if self.ip_address is not None:
             return self.get_network_device(client)
         else:
-            return self.get_usb_debice(client)
+            return self.get_usb_device(client)
 
     def install(self, APK_path='APK/teleop-debug.apk', verbose=True, reinstall=False):
         try:
