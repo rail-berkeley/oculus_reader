@@ -8,7 +8,11 @@ from ppadb.client import Client as AdbClient
 import sys
 
 def eprint(*args, **kwargs):
+    RED = "\033[1;31m"  
+    sys.stderr.write(RED)
     print(*args, file=sys.stderr, **kwargs)
+    RESET = "\033[0;0m"
+    sys.stderr.write(RESET)
 
 class OculusReader:
     def __init__(self,
@@ -81,7 +85,6 @@ class OculusReader:
                 return device
         eprint('Device not found. Make sure that device is running and is connected over USB')
         eprint('Run `adb devices` to verify that the device is visible.')
-        eprint('If you see "no permissions" next to the device serial, please put on the Oculus Quest and allow the access.')
         exit(1)
 
     def get_device(self):
