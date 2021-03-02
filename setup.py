@@ -10,4 +10,6 @@ setup(
     install_requires=[
         'numpy', 'pure-python-adb'
     ],
+    package_data={'': ['APK/teleop-debug.apk']},
+    include_package_data=True,
 )

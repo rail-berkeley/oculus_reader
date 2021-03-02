@@ -95,10 +95,12 @@ class OculusReader:
         else:
             return self.get_usb_device(client)
 
-    def install(self, APK_path='APK/teleop-debug.apk', verbose=True, reinstall=False):
+    def install(self, APK_path=None, verbose=True, reinstall=False):
         try:
             installed = self.device.is_installed(self.APK_name)
             if not installed or reinstall:
+                if APK_path is None:
+                    APK_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'APK', 'teleop-debug.apk')
                 success = self.device.install(APK_path, test=True, reinstall=reinstall)
                 installed = self.device.is_installed(self.APK_name)
                 if installed and success:
