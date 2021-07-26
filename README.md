@@ -26,7 +26,17 @@ This command has to be run from the repository workspace.
 
 ## Setup of the ADB
 
-ADB is required for the communication between Oculus Quest and the python reader script [Android Debug Bridge](https://developer.android.com/studio/command-line/adb). This introduction is created based on <https://developer.oculus.com/documentation/native/android/book-intro/>.
+[ADB](https://developer.android.com/studio/command-line/adb) is required for the communication between Oculus Quest and the python reader script.
+
+To install ADB on Ubuntu run:
+
+```
+sudo apt install android-tools-adb
+```
+
+On other systems follow the steps from the 'app_source' folder.
+
+### Set up of a new Oculus Quest device
 
 1. Determine your Oculus Quest account name:
 If you haven’t used Oculus Quest before, start it and follow the steps to create your profile and get yourself started. Otherwise follow these steps to find out your username:
@@ -51,13 +61,18 @@ If you haven’t used Oculus Quest before, start it and follow the steps to crea
         2. Unzip the file.
         3. Right-click on the .inf file and select **Install**.
 
-3. Install ADB. On Ubuntu: `sudo apt install android-tools-adb`. On other systems follow the steps from the 'app_source' folder.
-
-Now, if you intend to use the precompiled APK with the predefined behavior, where the position and the pressed buttons are transferred, please follow the steps from the [scripts folder](oculus_reader/README.md). If you plan to extend the app, please read the README from the [app_source folder](app_source/README.md).
-
 ## How to run the code
 
-After following README in either in *oculus_reader* or/and *app_source* folder, the system is ready for the teleoperation.
+If you intend to use the precompiled APK with the predefined behavior, where the position and the pressed buttons are transferred, please follow the steps from the [scripts folder](oculus_reader/README.md). If you plan to extend the app, please read the README from the [app_source folder](app_source/README.md).
+
+### Communication using the USB cable (easier to set up)
+
+1. Connect Oculus Quest to PC with USB cable. This is required to establish the connection.
+2. Run exemplary file `python oculus_reader/reader.py
+3. (optionally) If ROS is installed on your machine, the current transformation can be visualized using the script [visualize_oculus_transforms.py](oculus_reader/visualize_oculus_transforms.py).
+
+
+### Communication over the network (more portable)
 
 1. Make sure that Oculus Quest is connected to the same network as the computer.
 2. Connect Oculus Quest to PC with USB cable. This is required to establish the connection.
@@ -66,11 +81,12 @@ After following README in either in *oculus_reader* or/and *app_source* folder, 
 
     ce0551e7                device`
 
+If you see 'permission denied', please put on the headset and allow the permission as requested.
 4. Check the IP address of the headset:  
     `adb shell ip route`  
     Expected output:  
     `10.0.30.0/19 dev wlan0  proto kernel  scope link  **src **10.0.32.101`
 5. Read the IP address of the device standing after `**src`.
 6. Provide the IP address when creating OculusReader object.
-8. Run `python oculus_reader/reader.py`
-9. (optional) The current transformation can be visualized using the script [visualize_oculus_transforms.py](oculus_reader/visualize_oculus_transforms.py).
+7. Run exemplary file `python oculus_reader/reader.py
+8. (optionally) If ROS is installed on your machine, the current transformation can be visualized using the script [visualize_oculus_transforms.py](oculus_reader/visualize_oculus_transforms.py).
