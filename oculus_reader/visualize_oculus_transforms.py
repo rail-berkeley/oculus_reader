@@ -1,10 +1,9 @@
-from pyquaternion import Quaternion
 from reader import OculusReader
-from transformations import quaternion_from_matrix
-
+from tf.transformations import quaternion_from_matrix
 import rospy
 import tf2_ros
 import geometry_msgs.msg
+
 
 def publish_transform(transform, name):
     translation = transform[:3, 3]
@@ -27,19 +26,21 @@ def publish_transform(transform, name):
 
     br.sendTransform(t)
 
+
 def main():
     oculus_reader = OculusReader()
     rospy.init_node('oculus_reader')
 
     while not rospy.is_shutdown():
-        rospy.sleep(0.4)
-        poses, buttons = oculus_reader.get_arays_and_button()
-        if poses == []:
+        rospy.sleep(1)
+        transformations, buttons = oculus_reader.get_transformations_and_buttons()
+        if 'r' not in transformations:
             continue
 
-        right_controller_pose = poses[0]
+        right_controller_pose = transformations['r']
         publish_transform(right_controller_pose, 'oculus')
-        print(poses)
+        print('transformations', transformations)
+        print('buttons', buttons)
 
 if __name__ == '__main__':
     main()
