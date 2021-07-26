@@ -68,7 +68,7 @@ If you intend to use the precompiled APK with the predefined behavior, where the
 ### Communication using the USB cable (easier to set up)
 
 1. Connect Oculus Quest to PC with USB cable. This is required to establish the connection.
-2. Run exemplary file `python oculus_reader/reader.py
+2. Run the exemplary file: `python oculus_reader/reader.py`
 3. (optionally) If ROS is installed on your machine, the current transformation can be visualized using the script [visualize_oculus_transforms.py](oculus_reader/visualize_oculus_transforms.py).
 
 
@@ -76,17 +76,15 @@ If you intend to use the precompiled APK with the predefined behavior, where the
 
 1. Make sure that Oculus Quest is connected to the same network as the computer.
 2. Connect Oculus Quest to PC with USB cable. This is required to establish the connection.
-3. Verify that a device is visible with: `adb devices`. The expected output:
-`List of devices attached
-
-    ce0551e7                device`
-
-If you see 'permission denied', please put on the headset and allow the permission as requested.
-4. Check the IP address of the headset:  
+3. Put on the headset and allow the permission as requested.
+4. Verify that a device is visible with: `adb devices`. The expected output:  
+`List of devices attached`  
+`    ce0551e7                device`
+5. Check the IP address of the headset:  
     `adb shell ip route`  
     Expected output:  
     `10.0.30.0/19 dev wlan0  proto kernel  scope link  **src **10.0.32.101`
-5. Read the IP address of the device standing after `**src`.
-6. Provide the IP address when creating OculusReader object.
-7. Run exemplary file `python oculus_reader/reader.py
-8. (optionally) If ROS is installed on your machine, the current transformation can be visualized using the script [visualize_oculus_transforms.py](oculus_reader/visualize_oculus_transforms.py).
+6. Read the IP address of the device standing after `**src`.
+7. Provide the IP address when creating OculusReader object.
+8. Run the exemplary file: `python oculus_reader/reader.py`
+9. (optionally) If ROS is installed on your machine, the current transformation can be visualized using the script [visualize_oculus_transforms.py](oculus_reader/visualize_oculus_transforms.py).
