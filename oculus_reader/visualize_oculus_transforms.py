@@ -93,8 +93,9 @@ def process_transformations(transformations):
 def main():
     oculus_reader = OculusReader()
     rospy.init_node('oculus_reader')
+    rate = rospy.get_param('~rate', 1.0)
     while not rospy.is_shutdown():
-        rospy.sleep(1)
+        rospy.sleep(1.0 / rate)
         transformations, buttons = oculus_reader.get_transformations_and_buttons()
         if 'l' not in transformations or 'r' not in transformations:
             continue
