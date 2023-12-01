@@ -256,7 +256,7 @@ class OculusReader:
                     data = self.extract_joint_data(line, file_obj)
                     if data:
                         joints1_transforms, joints2_transforms = self.process_joint_data(data)
-                        if 'Thumb0' in joints1_transforms and 'Thumb0' in joints2_transforms:
+                        if joints1_transforms is not None and joints2_transforms is not None:
                             with self._lock:
                                 if joints1_transforms['Thumb0'][0][3] > 0 :
                                     self.last_left_joints_transforms = joints1_transforms
