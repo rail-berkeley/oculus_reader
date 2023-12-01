@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 from oculus_reader.FPS_counter import FPSCounter
 from oculus_reader.buttons_parser import parse_buttons
 import numpy as np
@@ -23,10 +24,13 @@ class OculusReader:
             run=True
         ):
         self.running = False
-        self.last_transforms = {}
+        self.last_hand_transforms = {}
+        self.last_left_joints_transforms = {}
+        self.last_right_joints_transforms = {}
         self.last_buttons = {}
         self._lock = threading.Lock()
         self.tag = 'wE9ryARX'
+        self.joint_tag = 'jsk73b1z_'
 
         self.ip_address = ip_address
         self.port = port
@@ -177,22 +181,97 @@ class OculusReader:
                 pass
         return output
 
+    def extract_joint_data(self, line, file_obj):
+        output = ''
+        i = 0
+        while not '!' in line:
+            if self.joint_tag in line:
+                tmp = line.split(self.joint_tag + str(i) + ': ')
+                if len(tmp) > 1:
+                    output += tmp[1] + ' '
+                    i += 1
+                else:
+                    return None
+            line = file_obj.readline().strip()
+        tmp = line.split(self.joint_tag + str(i) + ': ')
+        if len(tmp) > 1:
+            output += tmp[1]
+        else:
+            return None
+        return output
+
+    def process_joint_data(self, string):
+        try:
+            hand1_string, hand2_string = string.split(',WristRoot')
+        except ValueError:
+            return None, None
+        hand2_string = 'WristRoot' + hand2_string
+        hand2_string = hand2_string.split('!')[0]
+
+        joints1_transforms = self.process_joint_transforms(hand1_string)
+        joints2_transforms = self.process_joint_transforms(hand2_string)
+        return joints1_transforms, joints2_transforms
+
+    def process_joint_transforms(self, hand_string):
+        split_hand_strings = hand_string.split(' ,')
+        transforms = {}
+        for pair_string in split_hand_strings:
+            transform = np.empty((4,4))
+            pair = pair_string.split(':')
+            if len(pair) != 2:
+                continue
+            joint_char = pair[0] # joint name
+            transform_string = pair[1]
+            values = transform_string.split(' ')
+            c = 0
+            r = 0
+            count = 0
+            for value in values:
+                if not value:
+                    continue
+                transform[r][c] = float(value)
+                c += 1
+                if c >= 4:
+                    c = 0
+                    r += 1
+                count += 1
+            if count == 16:
+                transforms[joint_char] = transform
+        return transforms
+
     def get_transformations_and_buttons(self):
         with self._lock:
-            return self.last_transforms, self.last_buttons
+            return self.last_hand_transforms, self.last_buttons
+
+    def get_joint_transformations(self):
+        with self._lock:
+            return self.last_left_joints_transforms, self.last_right_joints_transforms
 
     def read_logcat_by_line(self, connection):
         file_obj = connection.socket.makefile()
         while self.running:
             try:
                 line = file_obj.readline().strip()
-                data = self.extract_data(line)
-                if data:
-                    transforms, buttons = OculusReader.process_data(data)
-                    with self._lock:
-                        self.last_transforms, self.last_buttons = transforms, buttons
-                    if self.print_FPS:
-                        self.fps_counter.getAndPrintFPS()
+                if self.joint_tag in line:
+                    data = self.extract_joint_data(line, file_obj)
+                    if data:
+                        joints1_transforms, joints2_transforms = self.process_joint_data(data)
+                        if 'Thumb0' in joints1_transforms and 'Thumb0' in joints2_transforms:
+                            with self._lock:
+                                if joints1_transforms['Thumb0'][0][3] > 0 :
+                                    self.last_left_joints_transforms = joints1_transforms
+                                    self.last_right_joints_transforms = joints2_transforms
+                                else:
+                                    self.last_left_joints_transforms = joints2_transforms
+                                    self.last_right_joints_transforms = joints1_transforms
+                else:
+                    data = self.extract_data(line)
+                    if data:
+                        transforms, buttons = OculusReader.process_data(data)
+                        with self._lock:
+                            self.last_hand_transforms, self.last_buttons = transforms, buttons
+                        if self.print_FPS:
+                            self.fps_counter.getAndPrintFPS()
             except UnicodeDecodeError:
                 pass
         file_obj.close()
@@ -205,6 +284,7 @@ def main():
     while True:
         time.sleep(0.3)
         print(oculus_reader.get_transformations_and_buttons())
+        print(oculus_reader.get_joint_transformations())
 
 
 if __name__ == '__main__':
