@@ -87,7 +87,10 @@ def process_transformations(transformations):
         if name in frame_tree:
             parent_frame = frame_tree[name]
             parent_transform = transformations[parent_frame]
-            tmp_transformations[name] = np.matmul(np.linalg.inv(parent_transform), transform)
+            if np.linalg.cond(parent_transform) < 1/np.finfo(parent_transform.dtype).eps:
+                tmp_transformations[name] = np.matmul(np.linalg.inv(parent_transform), transform)
+            else:
+                tmp_transformations[name] = np.eye(4)
     return tmp_transformations
 
 def main():
