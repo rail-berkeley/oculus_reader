@@ -37,32 +37,32 @@ frame_tree = {
 }
 
 def publish_transform(transform, name):
-    translation = transform[:3, 3]
+    # when switch tracked device from hand to controller, the first transform is likely to be invalid
+    if np.isclose(np.linalg.det(transform[:3, :3]), 1.0, atol=1e-3):
+        br = tf2_ros.TransformBroadcaster()
+        t = geometry_msgs.msg.TransformStamped()
 
-    br = tf2_ros.TransformBroadcaster()
-    t = geometry_msgs.msg.TransformStamped()
+        translation = transform[:3, 3]
+        t.header.stamp = rospy.Time.now()
+        t.header.frame_id = 'oculus_head'
+        t.child_frame_id = name
+        t.transform.translation.x = translation[0]
+        t.transform.translation.y = translation[1]
+        t.transform.translation.z = translation[2]
 
-    t.header.stamp = rospy.Time.now()
-    t.header.frame_id = 'oculus_head'
-    t.child_frame_id = name
-    t.transform.translation.x = translation[0]
-    t.transform.translation.y = translation[1]
-    t.transform.translation.z = translation[2]
+        quat = quaternion_from_matrix(transform)
+        t.transform.rotation.x = quat[0]
+        t.transform.rotation.y = quat[1]
+        t.transform.rotation.z = quat[2]
+        t.transform.rotation.w = quat[3]
 
-    quat = quaternion_from_matrix(transform)
-    t.transform.rotation.x = quat[0]
-    t.transform.rotation.y = quat[1]
-    t.transform.rotation.z = quat[2]
-    t.transform.rotation.w = quat[3]
-
-    br.sendTransform(t)
+        br.sendTransform(t)
 
 def publish_joint_transform(transform, name, prefix=''):
-    translation = transform[:3, 3]
-
     br = tf2_ros.TransformBroadcaster()
     t = geometry_msgs.msg.TransformStamped()
 
+    translation = transform[:3, 3]
     t.header.stamp = rospy.Time.now()
     if 'WristRoot' in name:
         t.header.frame_id = prefix + 'palm'

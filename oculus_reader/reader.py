@@ -229,6 +229,10 @@ class OculusReader:
             for value in values:
                 if not value:
                     continue
+                # when switch tracked device from hand to controller
+                # the first transform is likely to be invalid with nan values
+                if np.isnan(float(value)):
+                    return None
                 transform[r][c] = float(value)
                 c += 1
                 if c >= 4:
@@ -264,6 +268,11 @@ class OculusReader:
                                 else:
                                     self.last_left_joints_transforms = joints2_transforms
                                     self.last_right_joints_transforms = joints1_transforms
+                        else:
+                            with self._lock:
+                                # clear history
+                                self.last_left_joints_transforms = {}
+                                self.last_right_joints_transforms = {}
                 else:
                     data = self.extract_data(line)
                     if data:
