@@ -4,6 +4,7 @@ from tf.transformations import quaternion_from_matrix
 import rospy
 import tf2_ros
 import geometry_msgs.msg
+from std_msgs.msg import Bool, Float32, Float32MultiArray
 
 import copy
 import numpy as np
@@ -93,10 +94,38 @@ def process_transformations(transformations):
                 tmp_transformations[name] = np.eye(4)
     return tmp_transformations
 
+def init_button_publisher():
+    namelist = ['A', 'B', 'RThU', 'RJ', 'RG', 'RTr', 'rightJS', 'rightGrip', 'rightTrig',
+                'X', 'Y', 'LThU', 'LJ', 'LG', 'LTr',  'leftJS',  'leftGrip',  'leftTrig']
+    typelist = [Bool, Bool, Bool, Bool, Bool, Bool, Float32MultiArray, Float32, Float32,
+                Bool, Bool, Bool, Bool, Bool, Bool, Float32MultiArray, Float32, Float32]
+    prefix = '/oculus_reader/'
+    topiclist = [prefix + name for name in namelist]
+    publishers = {}
+    for idx, (topic, msg_type) in enumerate(zip(topiclist, typelist)):
+        publishers[namelist[idx]] = rospy.Publisher(topic, msg_type, queue_size=1)
+    return publishers
+
+def publish_buttons(buttons, publishers):
+    for key, value in buttons.items():
+        if key in publishers:
+            if isinstance(value, bool):
+                msg = Bool()
+            elif isinstance(value, tuple):
+                if len(value) == 1:
+                    msg = Float32()
+                    value = value[0]
+                else:
+                    msg = Float32MultiArray()
+                    value = list(value)
+            msg.data = value
+            publishers[key].publish(msg)
+
 def main():
     oculus_reader = OculusReader()
     rospy.init_node('oculus_reader')
     rate = rospy.get_param('~rate', 1.0)
+    button_publishers = init_button_publisher()
     while not rospy.is_shutdown():
         rospy.sleep(1.0 / rate)
         transformations, buttons = oculus_reader.get_transformations_and_buttons()
@@ -116,7 +145,8 @@ def main():
         for joint_name, transform in right_joint_transformations.items():
             publish_joint_transform(transform, joint_name, prefix='r_')
 
-        print('buttons', buttons)
+        if len(left_joint_transformations) == 0:
+            publish_buttons(buttons, button_publishers)
 
 if __name__ == '__main__':
     main()
