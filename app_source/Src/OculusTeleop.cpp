@@ -1254,13 +1254,16 @@ void main()
 //            TransformMatrices[axisSurfaces++] = matDeviceModel;
 //            TransformMatrices[axisSurfaces++] = trDevice.GetPointerMatrix();
 
-            const std::vector<ovrJoint>& joints = trDevice.GetHandModel().GetTransformedJoints();
-            for (int k = 0; k < static_cast<int>(joints.size()); ++k) {
-                ovrJoint joint = joints[k];
-                char const *jointName = joint.Name;
-                OVR::Posef& jointPose = joint.Pose;
-                OVR::Matrix4f jointPoseMatrix = OVR::Matrix4f(jointPose);
-                jointPoseTransformations.push_back(std::make_pair(jointName, jointPoseMatrix));
+            // get joint pose only if the device is a hand
+            if (device->GetType() == ovrControllerType_Hand) {
+                const std::vector<ovrJoint>& joints = trDevice.GetHandModel().GetTransformedJoints();
+                for (int k = 0; k < static_cast<int>(joints.size()); ++k) {
+                    ovrJoint joint = joints[k];
+                    char const *jointName = joint.Name;
+                    OVR::Posef &jointPose = joint.Pose;
+                    OVR::Matrix4f jointPoseMatrix = OVR::Matrix4f(jointPose);
+                    jointPoseTransformations.push_back(std::make_pair(jointName, jointPoseMatrix));
+                }
             }
 
             bool renderHand = (trDevice.GetHandPoseConfidence() == ovrConfidence_HIGH);
@@ -1272,7 +1275,7 @@ void main()
         // send values
         std::ostringstream output_ss, buttons_ss;
         bool first = true;
-        for(auto it = std::begin(handPoseTransformations); it != std::end(handPoseTransformations); ++it) {
+        for (auto it = std::begin(handPoseTransformations); it != std::end(handPoseTransformations); ++it) {
             if (!first) {
                 output_ss << '|';
                 buttons_ss << ",";
@@ -1288,7 +1291,7 @@ void main()
 
         std::ostringstream joint_ss;
         first = true;
-        for(auto it = std::begin(jointPoseTransformations); it != std::end(jointPoseTransformations); ++it) {
+        for (auto it = std::begin(jointPoseTransformations); it != std::end(jointPoseTransformations); ++it) {
             if (!first) {
                 joint_ss << ',';
             }
@@ -1307,14 +1310,14 @@ void main()
         for (std::size_t i = 0; i < longString.length();) {
             std::size_t chunkSize = std::min(maxChunkSize, longString.length() - i);
             if (i + maxChunkSize < longString.length()) {
-                while (longString[i + chunkSize] != ' ') // split at ' ' only
-                {
+                // split at ' ' only
+                while (longString[i + chunkSize] != ' ') {
                     chunkSize--;
                 }
             }
             std::string chunk = longString.substr(i, chunkSize);
             std::string s = std::to_string(idx);
-            __android_log_print(ANDROID_LOG_INFO, (prefix + s).c_str() , "%s", chunk.c_str());
+            __android_log_print(ANDROID_LOG_INFO, (prefix + s).c_str(), "%s", chunk.c_str());
             idx++;
             i += chunkSize;
         }
