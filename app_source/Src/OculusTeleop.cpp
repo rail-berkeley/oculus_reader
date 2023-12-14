@@ -531,6 +531,7 @@ void main()
               ControllerModelOculusTouchRight(nullptr),
               Buttons(nullptr) {
         theApp = this;
+        InitHeadMatrixInvPtr = nullptr;
     }
 
 //==============================
@@ -1221,7 +1222,7 @@ void main()
         BeamRenderer->RenderEyeView(out.FrameMatrices.CenterView, projectionMatrix, out.Surfaces);
 
         int axisSurfaces = 0;
-        std::vector<std::pair<char, OVR::Matrix4f>> handPoseTransformations;
+        std::vector<std::pair<char, OVR::Matrix4f>> handHeadPoseTransformations;
         std::vector<std::pair<char const *, OVR::Matrix4f>> jointPoseTransformations;
 
         // add the controller model surfaces to the list of surfaces to render
@@ -1240,6 +1241,16 @@ void main()
                 continue;
             }
             ovrInputDeviceHandBase& trDevice = *static_cast<ovrInputDeviceHandBase*>(device);
+
+            // get Initial Head Pose Matrix (Inverted for further calculation)
+            if (InitHeadMatrixInvPtr == nullptr) {
+                const Posef& headPose = trDevice.GetHeadPose();
+                const OVR::Matrix4f headPoseMatrix = OVR::Matrix4f(headPose);
+                OVR::Matrix4f tmpMatrix(Matrix4f::NoInit);
+                tmpMatrix = headPoseMatrix.Inverted();
+                InitHeadMatrixInvPtr = new OVR::Matrix4f(tmpMatrix);
+            }
+
             const char side = trDevice.IsLeftHand() ? 'l' : 'r';
 
             const Posef& handPose = trDevice.GetHandPose();
@@ -1249,8 +1260,14 @@ void main()
             const OVR::Matrix4f headPoseMatrix = OVR::Matrix4f(headPose);
             OVR::Matrix4f handPoseMatrixHeadCoord(Matrix4f::NoInit);
             OVR::Matrix4f::Multiply(&handPoseMatrixHeadCoord, headPoseMatrix.Inverted(), handPoseMatrix);
-            handPoseTransformations.push_back(std::make_pair(side, handPoseMatrixHeadCoord));
+            handHeadPoseTransformations.push_back(std::make_pair(side, handPoseMatrixHeadCoord));
             TransformMatrices[axisSurfaces++] = handPoseMatrix;
+
+            if (i == 0) {
+                OVR::Matrix4f headPoseMatrixInitHeadCoord(Matrix4f::NoInit);
+                OVR::Matrix4f::Multiply(&headPoseMatrixInitHeadCoord, *InitHeadMatrixInvPtr, headPoseMatrix);
+                handHeadPoseTransformations.push_back(std::make_pair('h', headPoseMatrixInitHeadCoord));
+            }
 //            TransformMatrices[axisSurfaces++] = matDeviceModel;
 //            TransformMatrices[axisSurfaces++] = trDevice.GetPointerMatrix();
 
@@ -1275,7 +1292,7 @@ void main()
         // send values
         std::ostringstream output_ss, buttons_ss;
         bool first = true;
-        for (auto it = std::begin(handPoseTransformations); it != std::end(handPoseTransformations); ++it) {
+        for (auto it = std::begin(handHeadPoseTransformations); it != std::end(handHeadPoseTransformations); ++it) {
             if (!first) {
                 output_ss << '|';
                 buttons_ss << ",";
