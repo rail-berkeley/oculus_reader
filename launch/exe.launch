@@ -1,6 +1,6 @@
 <launch>
   <node name="oculus_broadcaster" pkg="tf" type="static_transform_publisher"
-        args="0 0 0 0.7071068 0 0 0.7071068 world oculus_head 100" />
+        args="0 0 0 -1.570796 0 1.570796 world init_head 100" />
 
   <node name="oculus_reader" pkg="oculus_reader" type="visualize_oculus_transforms.py" output="screen">
     <param name="rate" value="5" />
