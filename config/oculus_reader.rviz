@@ -7,6 +7,7 @@ Panels:
         - /Global Options1
         - /Status1
         - /TF1
+        - /TF1/Frames1
       Splitter Ratio: 0.5
     Tree Height: 1079
   - Class: rviz/Selection
@@ -59,6 +60,8 @@ Visualization Manager:
       Frame Timeout: 15
       Frames:
         All Enabled: true
+        init_head:
+          Value: true
         l_ForearmStub:
           Value: true
         l_Index1:
@@ -171,69 +174,70 @@ Visualization Manager:
       Show Names: true
       Tree:
         world:
-          oculus_head:
-            l_palm:
-              l_WristRoot:
-                l_ForearmStub:
-                  {}
-                l_Index1:
-                  l_Index2:
-                    l_Index3:
-                      l_IndexTip:
-                        {}
-                l_Middle1:
-                  l_Middle2:
-                    l_Middle3:
-                      l_MiddleTip:
-                        {}
-                l_Pinky0:
-                  l_Pinky1:
-                    l_Pinky2:
-                      l_Pinky3:
-                        l_PinkyTip:
+          init_head:
+            oculus_head:
+              l_palm:
+                l_WristRoot:
+                  l_ForearmStub:
+                    {}
+                  l_Index1:
+                    l_Index2:
+                      l_Index3:
+                        l_IndexTip:
                           {}
-                l_Ring1:
-                  l_Ring2:
-                    l_Ring3:
-                      l_RingTip:
-                        {}
-                l_Thumb0:
-                  l_Thumb1:
-                    l_Thumb2:
-                      l_Thumb3:
-                        l_ThumbTip:
+                  l_Middle1:
+                    l_Middle2:
+                      l_Middle3:
+                        l_MiddleTip:
                           {}
-            r_palm:
-              r_WristRoot:
-                r_ForearmStub:
-                  {}
-                r_Index1:
-                  r_Index2:
-                    r_Index3:
-                      r_IndexTip:
-                        {}
-                r_Middle1:
-                  r_Middle2:
-                    r_Middle3:
-                      r_MiddleTip:
-                        {}
-                r_Pinky0:
-                  r_Pinky1:
-                    r_Pinky2:
-                      r_Pinky3:
-                        r_PinkyTip:
+                  l_Pinky0:
+                    l_Pinky1:
+                      l_Pinky2:
+                        l_Pinky3:
+                          l_PinkyTip:
+                            {}
+                  l_Ring1:
+                    l_Ring2:
+                      l_Ring3:
+                        l_RingTip:
                           {}
-                r_Ring1:
-                  r_Ring2:
-                    r_Ring3:
-                      r_RingTip:
-                        {}
-                r_Thumb0:
-                  r_Thumb1:
-                    r_Thumb2:
-                      r_Thumb3:
-                        r_ThumbTip:
+                  l_Thumb0:
+                    l_Thumb1:
+                      l_Thumb2:
+                        l_Thumb3:
+                          l_ThumbTip:
+                            {}
+              r_palm:
+                r_WristRoot:
+                  r_ForearmStub:
+                    {}
+                  r_Index1:
+                    r_Index2:
+                      r_Index3:
+                        r_IndexTip:
                           {}
+                  r_Middle1:
+                    r_Middle2:
+                      r_Middle3:
+                        r_MiddleTip:
+                          {}
+                  r_Pinky0:
+                    r_Pinky1:
+                      r_Pinky2:
+                        r_Pinky3:
+                          r_PinkyTip:
+                            {}
+                  r_Ring1:
+                    r_Ring2:
+                      r_Ring3:
+                        r_RingTip:
+                          {}
+                  r_Thumb0:
+                    r_Thumb1:
+                      r_Thumb2:
+                        r_Thumb3:
+                          r_ThumbTip:
+                            {}
       Update Interval: 0
       Value: true
   Enabled: true
@@ -264,7 +268,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 0.7703558206558228
+      Distance: 1.0362094640731812
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
@@ -280,9 +284,9 @@ Visualization Manager:
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 1.0597972869873047
+      Pitch: 1.134797215461731
       Target Frame: <Fixed Frame>
-      Yaw: 4.338580131530762
+      Yaw: 2.953577995300293
     Saved: ~
 Window Geometry:
   Displays:
