@@ -37,7 +37,7 @@ frame_tree = {
     'PinkyTip': 'Pinky3',
 }
 
-def publish_transform(transform, name):
+def publish_transform(transform, name, parent_frame):
     # when switch tracked device from hand to controller, the first transform is likely to be invalid
     if np.isclose(np.linalg.det(transform[:3, :3]), 1.0, atol=1e-3):
         br = tf2_ros.TransformBroadcaster()
@@ -45,7 +45,7 @@ def publish_transform(transform, name):
 
         translation = transform[:3, 3]
         t.header.stamp = rospy.Time.now()
-        t.header.frame_id = 'oculus_head'
+        t.header.frame_id = parent_frame
         t.child_frame_id = name
         t.transform.translation.x = translation[0]
         t.transform.translation.y = translation[1]
@@ -132,10 +132,13 @@ def main():
         if 'l' not in transformations or 'r' not in transformations:
             continue
 
+        head_pose = transformations['h']
+        publish_transform(head_pose, 'oculus_head', 'init_head')
+
         left_controller_pose = transformations['l']
-        publish_transform(left_controller_pose, 'l_palm')
+        publish_transform(left_controller_pose, 'l_palm', 'oculus_head')
         right_controller_pose = transformations['r']
-        publish_transform(right_controller_pose, 'r_palm')
+        publish_transform(right_controller_pose, 'r_palm', 'oculus_head')
 
         left_joint_transformations, right_joint_transformations = oculus_reader.get_joint_transformations()
         left_joint_transformations = process_transformations(left_joint_transformations)
