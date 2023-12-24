@@ -129,7 +129,7 @@ def main():
     while not rospy.is_shutdown():
         rospy.sleep(1.0 / rate)
         transformations, buttons = oculus_reader.get_transformations_and_buttons()
-        if 'l' not in transformations or 'r' not in transformations:
+        if 'l' not in transformations or 'r' not in transformations or 'h' not in transformations:
             continue
 
         head_pose = transformations['h']
