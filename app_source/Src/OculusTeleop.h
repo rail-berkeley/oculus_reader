@@ -552,6 +552,8 @@ namespace OVRFW {
         GlBuffer AxisUniformBuffer;
         GlProgram ProgAxis;
 
+        OVR::Matrix4f* InitHeadMatrixInvPtr;
+
         // because a single Gear VR controller can be a left or right controller dependent on the
         // user's handedness (dominant hand) setting, we can't simply track controllers using a left
         // or right hand slot look up, because on any frame a Gear VR controller could change from

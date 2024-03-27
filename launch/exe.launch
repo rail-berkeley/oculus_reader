@@ -1,0 +1,9 @@
+<launch>
+  <node name="oculus_broadcaster" pkg="tf" type="static_transform_publisher"
+        args="0 0 0 -1.570796 0 1.570796 world init_head 100" />
+
+  <node name="oculus_reader" pkg="oculus_reader" type="visualize_oculus_transforms.py" output="screen">
+    <param name="rate" value="5" />
+  </node>
+  <node name="rviz" pkg="rviz" type="rviz" args="-d $(find oculus_reader)/config/oculus_reader.rviz" />
+</launch>

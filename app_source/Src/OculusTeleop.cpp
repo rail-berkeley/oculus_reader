@@ -531,6 +531,7 @@ void main()
               ControllerModelOculusTouchRight(nullptr),
               Buttons(nullptr) {
         theApp = this;
+        InitHeadMatrixInvPtr = nullptr;
     }
 
 //==============================
@@ -1221,7 +1222,8 @@ void main()
         BeamRenderer->RenderEyeView(out.FrameMatrices.CenterView, projectionMatrix, out.Surfaces);
 
         int axisSurfaces = 0;
-        std::vector<std::pair<char, OVR::Matrix4f>> handPoseTransformations;
+        std::vector<std::pair<char, OVR::Matrix4f>> handHeadPoseTransformations;
+        std::vector<std::pair<char const *, OVR::Matrix4f>> jointPoseTransformations;
 
         // add the controller model surfaces to the list of surfaces to render
         for (int i = 0; i < (int)InputDevices.size(); ++i) {
@@ -1239,6 +1241,16 @@ void main()
                 continue;
             }
             ovrInputDeviceHandBase& trDevice = *static_cast<ovrInputDeviceHandBase*>(device);
+
+            // get Initial Head Pose Matrix (Inverted for further calculation)
+            if (InitHeadMatrixInvPtr == nullptr) {
+                const Posef& headPose = trDevice.GetHeadPose();
+                const OVR::Matrix4f headPoseMatrix = OVR::Matrix4f(headPose);
+                OVR::Matrix4f tmpMatrix(Matrix4f::NoInit);
+                tmpMatrix = headPoseMatrix.Inverted();
+                InitHeadMatrixInvPtr = new OVR::Matrix4f(tmpMatrix);
+            }
+
             const char side = trDevice.IsLeftHand() ? 'l' : 'r';
 
             const Posef& handPose = trDevice.GetHandPose();
@@ -1248,10 +1260,28 @@ void main()
             const OVR::Matrix4f headPoseMatrix = OVR::Matrix4f(headPose);
             OVR::Matrix4f handPoseMatrixHeadCoord(Matrix4f::NoInit);
             OVR::Matrix4f::Multiply(&handPoseMatrixHeadCoord, headPoseMatrix.Inverted(), handPoseMatrix);
-            handPoseTransformations.push_back(std::make_pair(side, handPoseMatrixHeadCoord));
+            handHeadPoseTransformations.push_back(std::make_pair(side, handPoseMatrixHeadCoord));
             TransformMatrices[axisSurfaces++] = handPoseMatrix;
+
+            if (i == 0) {
+                OVR::Matrix4f headPoseMatrixInitHeadCoord(Matrix4f::NoInit);
+                OVR::Matrix4f::Multiply(&headPoseMatrixInitHeadCoord, *InitHeadMatrixInvPtr, headPoseMatrix);
+                handHeadPoseTransformations.push_back(std::make_pair('h', headPoseMatrixInitHeadCoord));
+            }
 //            TransformMatrices[axisSurfaces++] = matDeviceModel;
 //            TransformMatrices[axisSurfaces++] = trDevice.GetPointerMatrix();
+
+            // get joint pose only if the device is a hand
+            if (device->GetType() == ovrControllerType_Hand) {
+                const std::vector<ovrJoint>& joints = trDevice.GetHandModel().GetTransformedJoints();
+                for (int k = 0; k < static_cast<int>(joints.size()); ++k) {
+                    ovrJoint joint = joints[k];
+                    char const *jointName = joint.Name;
+                    OVR::Posef &jointPose = joint.Pose;
+                    OVR::Matrix4f jointPoseMatrix = OVR::Matrix4f(jointPose);
+                    jointPoseTransformations.push_back(std::make_pair(jointName, jointPoseMatrix));
+                }
+            }
 
             bool renderHand = (trDevice.GetHandPoseConfidence() == ovrConfidence_HIGH);
             if (renderHand) {
@@ -1262,7 +1292,7 @@ void main()
         // send values
         std::ostringstream output_ss, buttons_ss;
         bool first = true;
-        for(auto it = std::begin(handPoseTransformations); it != std::end(handPoseTransformations); ++it) {
+        for (auto it = std::begin(handHeadPoseTransformations); it != std::end(handHeadPoseTransformations); ++it) {
             if (!first) {
                 output_ss << '|';
                 buttons_ss << ",";
@@ -1275,6 +1305,39 @@ void main()
         }
         output_ss << "&" << buttons_ss.str();
         __android_log_print(ANDROID_LOG_INFO, "wE9ryARX", "%s", output_ss.str().c_str());
+
+        std::ostringstream joint_ss;
+        first = true;
+        for (auto it = std::begin(jointPoseTransformations); it != std::end(jointPoseTransformations); ++it) {
+            if (!first) {
+                joint_ss << ',';
+            }
+            char const *name = it->first;
+            const OVR::Matrix4f& transformationMatrix = it->second;
+            joint_ss << name << ":" << TransformationMatrixToString(transformationMatrix);
+            first = false;
+        }
+        joint_ss << "!"; // as the end flag
+
+        int idx = 0;
+        std::size_t maxChunkSize = 1000;
+        std::string prefix = "jsk73b1z_";
+        std::string longString = joint_ss.str();
+        // split longString into several chunks to avoid truncation of log
+        for (std::size_t i = 0; i < longString.length();) {
+            std::size_t chunkSize = std::min(maxChunkSize, longString.length() - i);
+            if (i + maxChunkSize < longString.length()) {
+                // split at ' ' only
+                while (longString[i + chunkSize] != ' ') {
+                    chunkSize--;
+                }
+            }
+            std::string chunk = longString.substr(i, chunkSize);
+            std::string s = std::to_string(idx);
+            __android_log_print(ANDROID_LOG_INFO, (prefix + s).c_str(), "%s", chunk.c_str());
+            idx++;
+            i += chunkSize;
+        }
 
         // Add axis
         if (SampleConfiguration.RenderAxis && AxisSurface.surface != nullptr) {
