@@ -6,7 +6,8 @@ include ../../../../cflags.mk
 
 LOCAL_MODULE			:= vrinputstandard
 
-LOCAL_C_INCLUDES 		:= 	$(LOCAL_PATH)/../../../../../VrSamples/SampleFramework/Src \
+LOCAL_C_INCLUDES 		:= 	$(LOCAL_PATH)/../../../../../SampleCommon/Src \
+							$(LOCAL_PATH)/../../../../../SampleFramework/Src \
 							$(LOCAL_PATH)/../../../../../VrApi/Include \
 							$(LOCAL_PATH)/../../../../../1stParty/OVR/Include \
 							$(LOCAL_PATH)/../../../../../1stParty/utilities/include \
@@ -24,5 +25,5 @@ LOCAL_SHARED_LIBRARIES	:= vrapi
 
 include $(BUILD_SHARED_LIBRARY)
 
-$(call import-module,VrSamples/SampleFramework/Projects/Android/jni)
+$(call import-module,SampleFramework/Projects/Android/jni)
 $(call import-module,VrApi/Projects/AndroidPrebuilt/jni)

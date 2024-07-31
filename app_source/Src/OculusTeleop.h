@@ -29,7 +29,6 @@ Copyright   :   Copyright (c) Facebook Technologies, LLC and its affiliates. All
 #include "GUI/GuiSys.h"
 
 #include "VrApi_Input.h"
-#include "OVR_Filter.h"
 
 #include "Input/HandModel.h"
 #include "Input/Skeleton.h"

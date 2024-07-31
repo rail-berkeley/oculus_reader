@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/local/bin/python
 
 # This first bit of code is common bootstrapping code
 # to determine the SDK root, and to set up the import

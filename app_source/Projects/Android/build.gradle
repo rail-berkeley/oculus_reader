@@ -42,3 +42,9 @@ android {
     disable 'ExpiredTargetSdkVersion'
   }
 }
+
+tasks.withType(Exec) {
+    if (it.commandLine.contains('python')) {
+        it.commandLine = ['/usr/local/bin/python', *it.commandLine.drop(1)]
+    }
+}
