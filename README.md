@@ -88,3 +88,7 @@ If you intend to use the precompiled APK with the predefined behavior, where the
 7. Provide the IP address when creating OculusReader object.
 8. Run the exemplary file: `python oculus_reader/reader.py`
 9. (optionally) If ROS is installed on your machine, the current transformation can be visualized using the script [visualize_oculus_transforms.py](oculus_reader/visualize_oculus_transforms.py).
+
+
+### Stopping the app from adb
+It is possible to stop the app from adb. Use: `adb shell am force-stop com.rail.oculus.teleop`
