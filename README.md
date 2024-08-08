@@ -71,7 +71,6 @@ If you intend to use the precompiled APK with the predefined behavior, where the
 2. Run the exemplary file: `python oculus_reader/reader.py`
 3. (optionally) If ROS is installed on your machine, the current transformation can be visualized using the script [visualize_oculus_transforms.py](oculus_reader/visualize_oculus_transforms.py).
 
-
 ### Communication over the network (more portable)
 
 1. Make sure that Oculus Quest is connected to the same network as the computer.
@@ -89,6 +88,18 @@ If you intend to use the precompiled APK with the predefined behavior, where the
 8. Run the exemplary file: `python oculus_reader/reader.py`
 9. (optionally) If ROS is installed on your machine, the current transformation can be visualized using the script [visualize_oculus_transforms.py](oculus_reader/visualize_oculus_transforms.py).
 
-
 ### Stopping the app from adb
 It is possible to stop the app from adb. Use: `adb shell am force-stop com.rail.oculus.teleop`
+
+## Citation
+
+If you find this work helpful, please consider citing it using the following reference:
+```
+@misc{OrbikEbert2021OculusReader,
+  author = {Jedrzej Orbik, Frederik Ebert},
+  title = {Oculus Reader: Robotic Teleoperation Interface},
+  year = {2021},
+  url = {https://github.com/rail-berkeley/oculus_reader},
+  note = {Accessed: YYYY-MM-DD}
+}
+```
